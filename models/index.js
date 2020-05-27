@@ -8,9 +8,9 @@ const knex = require('knex')({
 		password: process.env.DB_PASSWORD || '',
 		database: process.env.DB_NAME || 'gallery',
     }
-  })
+  });
 
-const bookshelf = require('bookshelf')(knex)
+const bookshelf = require('bookshelf')(knex);
 
 const Album = bookshelf.model('Album', {
     tableName: 'albums',

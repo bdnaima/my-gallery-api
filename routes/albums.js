@@ -1,31 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const models = require('../models');
+const albumController = require('../controllers/album_controller')
 
 
 /** Get All Albums */
 
-router.get('/', async (req, res) => {
-    const all_albums = await new models.Album({}).fetchAll();
-
-    res.send({
-        status: 'success',
-        data: {
-            albums: all_albums
-        }
-    });
-});
+router.get('/', albumController.index);
 
 /** Get /:albumId */
-router.get('/:albumId', async(req, res) => {
-    const album = await new models.Album({ id: req.params.albumId}).fetch();
+router.get('/:albumId', albumController.show);
 
-    res.send({
-        status: "success",
-        data: {
-            album,
-        }
-    });
-});
+/** Create new album - POST  */
+
+router.post ('/', albumController.store);
 
 module.exports = router;

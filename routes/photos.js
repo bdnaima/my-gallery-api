@@ -1,30 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const models = require('../models');
+const photoController = require('../controllers/photo_controller');
 
 /** GET all photos */
 
-router.get('/', async (req, res) => {
-    const all_photos = await new models.Photo({}).fetchAll();
+router.get('/', photoController.index);
 
-    res.send({
-        status: 'success',
-        data: {
-            photos: all_photos
-        }
-    });
-});
+/** GET /:photoId */
+router.get('/:photoId', photoController.show);
 
-/** Get /:photoId */
-router.get('/:photoId', async(req, res) => {
-    const photo = await new models.Photo({ id: req.params.photoId}).fetch();
+/** Create new photo - POST  */
 
-    res.send({
-        status: "success",
-        data: {
-            photo,
-        }
-    });
-});
+router.post ('/', photoController.store);
 
 module.exports = router;
