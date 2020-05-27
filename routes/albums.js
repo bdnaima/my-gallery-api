@@ -2,27 +2,28 @@ const express = require('express');
 const router = express.Router();
 const models = require('../models');
 
-/** GET all photos */
+
+/** Get All Albums */
 
 router.get('/', async (req, res) => {
-    const all_photos = await new models.Photo({}).fetchAll();
+    const all_albums = await new models.Album({}).fetchAll();
 
     res.send({
         status: 'success',
         data: {
-            photos: all_photos
+            albums: all_albums
         }
     });
 });
 
-/** Get /:photoId */
-router.get('/:photoId', async(req, res) => {
-    const photo = await new models.Photo({ id: req.params.photoId}).fetch();
+/** Get /:albumId */
+router.get('/:albumId', async(req, res) => {
+    const album = await new models.Album({ id: req.params.albumId}).fetch();
 
     res.send({
         status: "success",
         data: {
-            photo,
+            album,
         }
     });
 });
