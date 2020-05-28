@@ -18,4 +18,7 @@ router.post ('/', albumController.store);
 
 router.delete('/:albumId', albumController.destroy);
 
+/** Update  photo */
+router.put('/:albumId/photos/:photoId', albumController.update);
+
 module.exports = router;
