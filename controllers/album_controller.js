@@ -4,6 +4,8 @@
 
 const models = require('../models')
 
+
+// Show all albums
 const index = async (req, res) => {
     const all_albums = await new models.Album({}).fetchAll();
 
@@ -15,8 +17,9 @@ const index = async (req, res) => {
     });
 };
 
+//Show individual album
 const show = async(req, res) => {
-    const album = await new models.Album({ id: req.params.albumId}).fetch();
+    const album = await new models.Album({ id: req.params.albumId}).fetch( {withRelated:'photos'} );
 
     res.send({
         status: "success",
@@ -26,6 +29,7 @@ const show = async(req, res) => {
     });
 };
 
+// Create new album
 const store = async (req, res) => {
     const album = new models.Album({
         title: req.body.title,
@@ -40,9 +44,25 @@ const store = async (req, res) => {
     })
 };
 
+// Delete album
+const destroy = async (req, res) => {
+    const album = await new models.Album({ id: req.params.albumId }).fetch( {withRelated: 'photos'} );
+    
+    await album.photos().detach();
+    await album.destroy();
+  
+    res.send({
+      status: "success",
+      data: {
+        album,
+      },
+    });
+  };
+
 
 module.exports = {
     index,
     show,
-    store
+    store,
+    destroy
 }

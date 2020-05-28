@@ -12,13 +12,28 @@ const knex = require('knex')({
 
 const bookshelf = require('bookshelf')(knex);
 
+
 const Album = bookshelf.model('Album', {
     tableName: 'albums',
+    photos() {
+        return this.belongsToMany('Photo')
+    }
 });
+
 
 const Photo = bookshelf.model('Photo', {
     tableName: 'photos',
+    albums() {
+        return this.belongsToMany('Album');
+    }
 });
+
+// const User = bookshelf.model('User', {
+//     tableName: 'users',
+//     albums() {
+//         return this.belongsToMany('album');
+//     }
+// });
 
 module.exports = {
     bookshelf,

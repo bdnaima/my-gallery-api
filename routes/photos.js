@@ -13,4 +13,7 @@ router.get('/:photoId', photoController.show);
 
 router.post ('/', photoController.store);
 
+/** Delete album */
+router.delete('/:photoId', photoController.destroy);
+
 module.exports = router;
