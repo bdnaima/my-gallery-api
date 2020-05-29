@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/user_controller')
+const userValidationRules = require('../validation_rules/user');
 
 
 /** Get All Users */
@@ -12,7 +13,7 @@ router.get('/:userId', userController.show);
 
 /** Create new user - POST  */
 
-router.post ('/', userController.store);
+router.post ('/', userValidationRules.createRules, userController.store);
 
 /** Delete user */
 

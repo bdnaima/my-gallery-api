@@ -1,7 +1,7 @@
 /**
  * Usercontroller
  */
-
+const { validationResult } = require('express-validator');
 const models = require("../models");
 
 /** Get  */
@@ -9,11 +9,7 @@ const index = async (req, res) => {
   const all_users = await new models.User().fetchAll();
 
   res.send({
-    status: "success",
-    data: {
-      users: all_users,
-    },
-  });
+    status: "success", data: {users: all_users,}, });
 };
 
 /** Show individual user */
@@ -21,14 +17,22 @@ const show = async (req, res) => {
   const user = await new models.User({ id: req.params.userId }).fetch({withRelated: ['albums', 'photos']});
 
   res.send({
-    status: "success",
-    data: {
-      user,
-    },
-  });
+    status: "success", data: {user,}, });
 };
 
+
+ // Create new user
 const store = async (req, res) => {
+  
+  //Check validation result
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log("Wrong.", errors.array());
+    res.status(422).send({ errors: errors.array() });
+    return;
+  };
+  
+ 
   const userInfo = {
     email: req.body.email,
     password: req.body.password,
@@ -38,12 +42,9 @@ const store = async (req, res) => {
   
   const user = await new models.User(userInfo).save();
   res.send({
-    status: "success",
-    data: {
-      user,
-    },
-  });
+    status: "success",data: {user,}, });
 };
+
 
 // Delete User
 const destroy = async (req, res) => {
@@ -53,11 +54,7 @@ const destroy = async (req, res) => {
   await user.destroy();
 
   res.send({
-    status: "success",
-    data: {
-      user,
-    },
-  });
+    status: "success", data: {user,}, });
 };
 
 module.exports = {
