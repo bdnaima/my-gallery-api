@@ -4,44 +4,54 @@
 
 const models = require('../models')
 
-
 // Show all albums
 const index = async (req, res) => {
-        const all_albums = await new models.Album({}).fetchAll();
 
-        res.send({
-            status: 'success',
-            data: {
-                albums: all_albums
-            }
-        })
+    try{
+        const all_albums = await new models.Album({}).fetchAll();
+            res.send({
+                status: 'success', data: {albums: all_albums}});
+    
+    } catch (error) {
+        res.status(500).send({status: 'fail', message: "Sorry, server error"});
+
+        throw error;
+    }
 };
 
 //Show individual album
 const show = async(req, res) => {
-    const album = await new models.Album({ id: req.params.albumId}).fetch( {withRelated:'photos'} );
 
-    res.send({
-        status: "success",
-        data: {
-            album,
-        }
-    });
+    try {
+    const album = await new models.Album({ id: req.params.albumId}).fetch( {withRelated:'photos'});
+        res.send({status: "success", data: {album,} });
+    
+    } catch (error) {
+        res.status(500).send({status: 'fail', message: "Sorry, could not get album"});
+
+        throw error;
+    }
 };
 
 // Create new album
 const store = async (req, res) => {
-    const album = new models.Album({
-        title: req.body.title,
-        user_id: req.body.user_id,
-    });
-    await album.save()
-    res.send({
-        status: "success",
-        data: {
-            album
-        },
-    })
+
+    if (!req.body.title) {
+        res.send({status: "fail",data: {title: "title is required"}});
+    };
+
+    try {
+        const album = new models.Album({title: req.body.title, user_id: req.body.user_id,
+        });
+
+        await album.save()
+        res.send({status: "success", data: {album}});
+    
+    } catch (error) {
+        res.status(405).send({status: 'fail', message: "Method not allowed."});
+
+        throw error;
+    };
 };
 
 // Add photo in an album 
@@ -54,33 +64,34 @@ const update = async (req, res) => {
         await album.fetch({withRelated: 'photos'})
         await photo.fetch({withRelated: 'albums'})
         await album.photos().attach(photo)
+        res.send({status: "success",data: album});
 
-        res.send({
-            status: "success",
-            data: album
-        });
     } catch {
-        res.status(400).send({
-            status: 'failed',
-            message: "could not add photo",
-        });
-    }
+        res.status(405).send({status: 'fail', message: "Method not allowed."});
+
+        throw error;
+    };
 };
 
 
 // Delete album
 const destroy = async (req, res) => {
-    const album = await new models.Album({ id: req.params.albumId }).fetch( {withRelated: 'photos'} );
+
+    try {
+        const album = await new models.Album({ id: req.params.albumId }).fetch( {withRelated: 'photos'} );
+        
+        await album.photos().detach();
+        await album.destroy();
     
-    await album.photos().detach();
-    await album.destroy();
-  
-    res.send({
-      status: "success",
-      data: {
-        album,
-      },
-    });
+        res.send({
+        status: "success", data: {album},
+        });
+        
+    } catch (error) {
+        res.status(405).send({status: 'fail', message: "Method not allowed."});
+
+        throw error;
+    }
   };
 
 

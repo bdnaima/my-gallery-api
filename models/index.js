@@ -20,7 +20,6 @@ const Album = bookshelf.model('Album', {
     }
 });
 
-
 const Photo = bookshelf.model('Photo', {
     tableName: 'photos',
     albums() {
@@ -28,15 +27,19 @@ const Photo = bookshelf.model('Photo', {
     }
 });
 
-// const User = bookshelf.model('User', {
-//     tableName: 'users',
-//     albums() {
-//         return this.belongsToMany('album');
-//     }
-// });
+const User = bookshelf.model('User', {
+    tableName: 'users',
+    albums() {
+        return this.hasMany('Album');
+    },
+    photos() {
+        return this.hasMany('Photo');
+    },
+});
 
 module.exports = {
     bookshelf,
     Album,
     Photo,
+    User,
 };
