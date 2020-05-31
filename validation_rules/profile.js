@@ -1,14 +1,13 @@
 /**
- * User Validation Rules
+ * Profile Validation Rules
  */
 
 const { body } = require('express-validator');
 
 
 
-const createRules = [
+const updateProfileRules = [
 	
-	body('email').notEmpty(),
 	body('password').isLength({ min: 3 }),
 	body('first_name').isLength({ min: 3 }),
 	body('last_name').isLength({ min: 3 }),
@@ -16,5 +15,5 @@ const createRules = [
 
 
 module.exports = {
-    createRules,
+    updateProfileRules,
 }

@@ -1,7 +1,7 @@
 /** 
  * Authentication
  */
-
+const bcrypt = require('bcrypt');
  const { User } = require('../../models')
 
  const basic = async (req, res, next) => {
@@ -16,24 +16,36 @@
      //Splitting Basic and decoding
     const [authSchema, base64Payload] = req.headers.authorization.split(' ');
 
-     if(!authSchema.toLowerCase() === "basic") {
+     if(authSchema.toLowerCase() !== "basic") {
          // not ours to authenticate
-         next();
+         res.status(401).send({status:'fail', data: 'Authentication required.'});
+         return;
      };
 
     //Decoding
     const decodedPayload = Buffer.from(base64Payload, 'base64').toString('ascii');
     
     //User information
-	const [email, password] = decodedPayload.split(':');
+    const [email, password] = decodedPayload.split(':');
+    if(!email || !password) {
+        res.status(401).send({status: 'fail', data: 'must have appropriate email and password.',});
+        return
+    }
+    
+    //Check if user exists
+    const user = await new User({email}).fetch({ require: false });
+    if (!user) {
+		res.status(401).send({status: 'fail', data: 'Authorization failed', });
+        return;
+    }
 
-	// ask db if it has a matching user with the same username and password
-	const user = await new User({ email, password }).fetch({ require: false });
-	if (!user) {
-		res.status(401).send({
-			status: 'fail',
-			data: 'Authorization failed',
-		});
+    const hash = user.get('password');
+
+    //Comparison
+    const result = await bcrypt.compare(password, hash);
+
+	if (!result) {
+		res.status(401).send({status: 'fail', data: 'Authorization failed', });
 		return;
     }
     

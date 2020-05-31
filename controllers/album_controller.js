@@ -7,13 +7,15 @@ const models = require('../models')
 // Show all albums
 const index = async (req, res) => {
 
+    console.log(req.user)
+
     try{
         const all_albums = await new models.Album({}).fetchAll();
             res.send({
                 status: 'success', data: {albums: all_albums}, });
     
     } catch (error) {
-        res.status(500).send({status: 'fail', message: "Sorry, server error"});
+        res.status(500).send({status: 'error', message: "Sorry, server error"});
 
         throw error;
     };
@@ -27,7 +29,7 @@ const show = async(req, res) => {
         res.send({status: "success", data: {album,}, });
     
     } catch (error) {
-        res.status(405).send({status: 'fail', message: "Method not allowed"});
+        res.status(405).send({status: 'error', message: "Method not allowed"});
 
         throw error;
     };
@@ -52,7 +54,7 @@ const store = async (req, res) => {
         res.send({status: "success", data: {album}, });
     
     } catch (error) {
-        res.status(405).send({status: 'fail', message: "Method not allowed"});
+        res.status(405).send({status: 'error', message: "Method not allowed"});
 
         throw error;
     };
@@ -79,7 +81,7 @@ const update = async (req, res) => {
         res.send({status: "success",data: album});
 
     } catch {
-        res.status(405).send({status: 'fail', message: "Method not allowed."});
+        res.status(405).send({status: 'error', message: "Method not allowed."});
 
         throw error;
     };
@@ -98,7 +100,7 @@ const destroy = async (req, res) => {
         res.send({status: "success", data: {album}, });
         
     } catch (error) {
-        res.status(405).send({status: 'fail', message: "Method not allowed."});
+        res.status(405).send({status: 'error', message: "Method not allowed."});
 
         throw error;
     }
@@ -117,7 +119,7 @@ const destroy = async (req, res) => {
         res.send({status: "success",data: album});
 
     } catch {
-        res.status(405).send({status: 'fail', message: "Method not allowed"});
+        res.status(405).send({status: 'error', message: "Method not allowed"});
 
         throw error;
     };

@@ -14,7 +14,7 @@ const index = async (req, res) => {
       status: "success", data: {photos: all_photos,}, });
 
   } catch (error) {
-      res.status(500).send({status: 'fail', message: "Sorry, server error"});
+      res.status(500).send({status: 'error', message: "Sorry, server error"});
 
       throw error;
     };
@@ -31,7 +31,7 @@ const show = async (req, res) => {
       status: "success", data: {photo,}, });
     
   } catch (error) {
-      res.status(405).send({status: 'fail', message: "Method not allowed"});
+      res.status(405).send({status: 'error', message: "Method not allowed"});
 
       throw error;
     };
@@ -62,7 +62,7 @@ const store = async (req, res) => {
       status: "success",data: {photo}, });
 
   } catch (error) {
-      res.status(405).send({status: 'fail', message: "Method not allowed"});
+      res.status(405).send({status: 'error', message: "Method not allowed"});
       
       throw error;
     };
@@ -82,7 +82,7 @@ const destroy = async (req, res) => {
       status: "success", data: {photo}, });
 
   } catch (error) {
-      res.status(405).send({status: 'fail', message: "Method not allowed"});
+      res.status(405).send({status: 'error', message: "Method not allowed"});
 
       throw error;  
     };

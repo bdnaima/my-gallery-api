@@ -8,10 +8,12 @@ router.get('/', (req, res) => {
 });
 
 // Authenticating all routes with middleware basic
-router.use(auth.basic);
+// router.use(auth.basic);
 
 router.use('/photos', require('./photos'));
 router.use('/albums', require('./albums'));
+router.use('/profile', [auth.basic], require('./profile'));
+
 router.use('/users', require('./users'));
 
 module.exports = router;

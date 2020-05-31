@@ -1,7 +1,8 @@
 /**
  * Usercontroller
  */
-const { validationResult } = require('express-validator');
+const bcrypt = require('bcrypt');
+const { matchedData, validationResult } = require('express-validator');
 const models = require("../models");
 
 /** Get  */
@@ -15,7 +16,7 @@ const index = async (req, res) => {
       status: "success", data: {users: all_users,}, });
 
   } catch (error) {
-      res.status(500).send({status: 'fail', message: "Sorry, server error"});
+      res.status(500).send({status: 'error', message: "Sorry, server error"});
 
       throw error;
     };
@@ -32,7 +33,7 @@ const show = async (req, res) => {
       status: "success", data: {user,}, });
 
   } catch (error) {
-      res.status(405).send({status: 'fail', message: "Method not allowed"});
+      res.status(405).send({status: 'error', message: "Method not allowed"});
 
       throw error;
     };
@@ -50,21 +51,28 @@ const store = async (req, res) => {
     return;
   };
   
- 
-  const userInfo = {
-    email: req.body.email,
-    password: req.body.password,
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-  };
+  const validData = matchedData(req);
+
+  //Hashing of password
+  try {
+    const hash = await bcrypt.hash(validData.password, models.User.hashSaltRounds);
+    validData.password = hash;
+
+  } catch(error) {
+    res.status(500).send({status: 'error', message: "Something went wrong when hashing the password."});
+
+    throw error;
+    
+  }
+
 
   try{
-    const user = await new models.User(userInfo).save();
+    const user = await new models.User(validData).save();
     res.send({
       status: "success",data: {user,}, });
 
   } catch (error) {
-      res.status(405).send({status: 'fail', message: "Method not allowed"});
+      res.status(405).send({status: 'error', message: "Method not allowed"});
       
       throw error;
     };
@@ -85,7 +93,7 @@ const destroy = async (req, res) => {
       status: "success", data: {user,}, });
       
   } catch (error) {
-      res.status(405).send({status: 'fail', message: "Method not allowed"});
+      res.status(405).send({status: 'error', message: "Method not allowed"});
         
       throw error;
     };
