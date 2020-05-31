@@ -17,17 +17,13 @@ const index = async (req, res) => {
       res.status(500).send({status: 'fail', message: "Sorry, server error"});
 
       throw error;
-  };
+    };
 };
 
 
 /** Show individual photo */
 const show = async (req, res) => {
   
-//   if (!req.params.photoId) {
-//     res.send({status: "fail",data: {id: "Photo does not exist."}});
-// };
-
   try {
     const photo = await new models.Photo({ id: req.params.photoId }).fetch();
 
@@ -35,29 +31,22 @@ const show = async (req, res) => {
       status: "success", data: {photo,}, });
     
   } catch (error) {
-      res.status(404).send({status: 'fail', message: "Cannot find page."});
+      res.status(405).send({status: 'fail', message: "Method not allowed"});
 
       throw error;
-  };
+    };
 };
 
 
 //Create new photo
-
-
-
 const store = async (req, res) => {
 
 //Check validation result
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log("Wrong.", errors.array());
     res.status(422).send({ errors: errors.array() });
     return;
   };
-
-  //Extract valid data
-
 
   //Insert valid data
   const photoInfo = {
@@ -73,8 +62,10 @@ const store = async (req, res) => {
       status: "success",data: {photo}, });
 
   } catch (error) {
-    res.status(405).send({status: 'fail', message: "Method not allowed."});
-  }
+      res.status(405).send({status: 'fail', message: "Method not allowed"});
+      
+      throw error;
+    };
 };
 
 
@@ -91,8 +82,10 @@ const destroy = async (req, res) => {
       status: "success", data: {photo}, });
 
   } catch (error) {
-      res.status(405).send({status: 'fail', message: "Method not allowed."});
-  }
+      res.status(405).send({status: 'fail', message: "Method not allowed"});
+
+      throw error;  
+    };
 };
 
 module.exports = {

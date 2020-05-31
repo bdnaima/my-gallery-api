@@ -16,7 +16,7 @@ const index = async (req, res) => {
         res.status(500).send({status: 'fail', message: "Sorry, server error"});
 
         throw error;
-    }
+    };
 };
 
 //Show individual album
@@ -27,10 +27,10 @@ const show = async(req, res) => {
         res.send({status: "success", data: {album,}, });
     
     } catch (error) {
-        res.status(500).send({status: 'fail', message: "Sorry, could not get album"});
+        res.status(405).send({status: 'fail', message: "Method not allowed"});
 
         throw error;
-    }
+    };
 };
 
 // Create new album
@@ -39,7 +39,6 @@ const store = async (req, res) => {
     //Check validation result
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-    console.log("Wrong.", errors.array());
     res.status(422).send({ errors: errors.array() });
     return;
     };
@@ -53,7 +52,7 @@ const store = async (req, res) => {
         res.send({status: "success", data: {album}, });
     
     } catch (error) {
-        res.status(405).send({status: 'fail', message: "Method not allowed."});
+        res.status(405).send({status: 'fail', message: "Method not allowed"});
 
         throw error;
     };
@@ -118,7 +117,7 @@ const destroy = async (req, res) => {
         res.send({status: "success",data: album});
 
     } catch {
-        res.status(405).send({status: 'fail', message: "Method not allowed."});
+        res.status(405).send({status: 'fail', message: "Method not allowed"});
 
         throw error;
     };
