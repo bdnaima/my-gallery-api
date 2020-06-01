@@ -10,7 +10,7 @@ const index = async (req, res) => {
     console.log(req.user)
 
     try{
-        const all_albums = await new models.Album({}).fetchAll();
+        const all_albums = await new models.Album({}).where('user_id', req.user.id).fetchAll();
             res.send({
                 status: 'success', data: {albums: all_albums}, });
     
@@ -25,11 +25,11 @@ const index = async (req, res) => {
 const show = async(req, res) => {
 
     try {
-    const album = await new models.Album({ id: req.params.albumId}).fetch( {withRelated:'photos'});
+    const album = await new models.Album({ id: req.params.albumId, user_id: req.user.id}).fetch( {withRelated:'photos'});
         res.send({status: "success", data: {album,}, });
     
     } catch (error) {
-        res.status(405).send({status: 'error', message: "Method not allowed"});
+        res.status(404).send({status: 'error', message: "Album does not exist in your account."});
 
         throw error;
     };
@@ -41,14 +41,13 @@ const store = async (req, res) => {
     //Check validation result
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-    res.status(422).send({ errors: errors.array() });
-    return;
+        res.status(422).send({ errors: errors.array() });
+        return;
     };
 
 
     try {
-        const album = new models.Album({title: req.body.title, user_id: req.body.user_id,
-        });
+        const album = new models.Album({title: req.body.title, user_id: req.user.id, });
 
         await album.save()
         res.send({status: "success", data: {album}, });
@@ -63,8 +62,8 @@ const store = async (req, res) => {
 // Add photo in an album 
 const update = async (req, res) => {
 
-    const album = new models.Album({ id: req.params.albumId });
-    const photo = new models.Photo({ id: req.params.photoId });
+    const album = new models.Album({ id: req.params.albumId, user_id: req.user.id, });
+    const photo = new models.Photo({ id: req.params.photoId, user_id: req.user.id, });
 
      //Check validation result
      const errors = validationResult(req);
@@ -81,7 +80,7 @@ const update = async (req, res) => {
         res.send({status: "success",data: album});
 
     } catch {
-        res.status(405).send({status: 'error', message: "Method not allowed."});
+        res.status(404).send({status: 'error', message: "Not found."});
 
         throw error;
     };
@@ -92,7 +91,7 @@ const update = async (req, res) => {
 const destroy = async (req, res) => {
 
     try {
-        const album = await new models.Album({ id: req.params.albumId }).fetch( {withRelated: 'photos'} );
+        const album = await new models.Album({ id: req.params.albumId, user_id: req.user.id}).fetch( {withRelated: 'photos'} );
         
         await album.photos().detach();
         await album.destroy();
@@ -100,7 +99,7 @@ const destroy = async (req, res) => {
         res.send({status: "success", data: {album}, });
         
     } catch (error) {
-        res.status(405).send({status: 'error', message: "Method not allowed."});
+        res.status(404).send({status: 'error', message: "Delete failed. Album does not exist in your account."});
 
         throw error;
     }

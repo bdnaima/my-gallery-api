@@ -2,10 +2,9 @@
  * Authentication
  */
 const bcrypt = require('bcrypt');
- const { User } = require('../../models')
+const { User } = require('../../models');
 
- const basic = async (req, res, next) => {
-     console.log("From auth.basic");
+const basic = async (req, res, next) => {
     
      // Check if authorization header exists, otherwise deny.
      if (!req.headers.authorization) {
@@ -17,7 +16,7 @@ const bcrypt = require('bcrypt');
     const [authSchema, base64Payload] = req.headers.authorization.split(' ');
 
      if(authSchema.toLowerCase() !== "basic") {
-         // not ours to authenticate
+         // not supported
          res.status(401).send({status:'fail', data: 'Authentication required.'});
          return;
      };
@@ -32,7 +31,6 @@ const bcrypt = require('bcrypt');
         return
     }
     
-    //Check if user exists
     const user = await new User({email}).fetch({ require: false });
     if (!user) {
 		res.status(401).send({status: 'fail', data: 'Authorization failed', });
@@ -50,7 +48,7 @@ const bcrypt = require('bcrypt');
     }
     
 	req.user = user;
-     next();
+    next();
 };
 
 module.exports = {

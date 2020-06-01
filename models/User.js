@@ -13,5 +13,6 @@
         },
     }, {
         hashSaltRounds: 10,
+
     });
  }

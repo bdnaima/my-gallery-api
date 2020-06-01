@@ -8,7 +8,7 @@ const models = require("../models");
 const index = async (req, res) => {
 
   try {
-    const all_photos = await new models.Photo().fetchAll();
+    const all_photos = await new models.Photo().where('user_id', req.user.id).fetchAll();
 
     res.send({
       status: "success", data: {photos: all_photos,}, });
@@ -25,13 +25,13 @@ const index = async (req, res) => {
 const show = async (req, res) => {
   
   try {
-    const photo = await new models.Photo({ id: req.params.photoId }).fetch();
+    const photo = await new models.Photo({ id: req.params.photoId, user_id: req.user.id }).fetch();
 
     res.send({
       status: "success", data: {photo,}, });
     
   } catch (error) {
-      res.status(405).send({status: 'error', message: "Method not allowed"});
+      res.status(404).send({status: 'error', message: "Photo does not exist in your account."});
 
       throw error;
     };
@@ -49,15 +49,16 @@ const store = async (req, res) => {
   };
 
   //Insert valid data
-  const photoInfo = {
-    title: req.body.title,
-    url: req.body.url,
-    comment: req.body.comment,
-    user_id: req.body.user_id,
-  };
   
   try {
-    const photo = await new models.Photo(photoInfo).save();
+    const photo =  new models.Photo({
+      title: req.body.title, 
+      url: req.body.url, 
+      comment: req.body.comment, 
+      user_id: req.user.id
+    });
+
+    await photo.save();
     res.send({
       status: "success",data: {photo}, });
 
@@ -73,7 +74,7 @@ const store = async (req, res) => {
 const destroy = async (req, res) => {
 
   try{
-    const photo = await new models.Photo({ id: req.params.photoId }).fetch( {withRelated: 'albums'} );
+    const photo = await new models.Photo({ id: req.params.photoId, user_id: req.user.id }).fetch( {withRelated: 'albums'} );
     
     await photo.albums().detach();
     await photo.destroy();
@@ -82,7 +83,7 @@ const destroy = async (req, res) => {
       status: "success", data: {photo}, });
 
   } catch (error) {
-      res.status(405).send({status: 'error', message: "Method not allowed"});
+      res.status(404).send({status: 'error', message: "Delete failed. Photo does not exist in your account."});
 
       throw error;  
     };
