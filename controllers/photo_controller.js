@@ -9,13 +9,10 @@ const index = async (req, res) => {
 
   try {
     const all_photos = await new models.Photo().where('user_id', req.user.id).fetchAll();
-
-    res.send({
-      status: "success", data: {photos: all_photos,}, });
+    res.send({status: "success", data: {photos: all_photos,}, });
 
   } catch (error) {
       res.status(500).send({status: 'error', message: "Sorry, server error"});
-
       throw error;
     };
 };
@@ -23,16 +20,13 @@ const index = async (req, res) => {
 
 /** Show individual photo */
 const show = async (req, res) => {
-  
+
   try {
     const photo = await new models.Photo({ id: req.params.photoId, user_id: req.user.id }).fetch();
-
-    res.send({
-      status: "success", data: {photo,}, });
+    res.send({status: "success", data: {photo,}, });
     
   } catch (error) {
       res.status(404).send({status: 'error', message: "Photo does not exist in your account."});
-
       throw error;
     };
 };
@@ -59,12 +53,10 @@ const store = async (req, res) => {
     });
 
     await photo.save();
-    res.send({
-      status: "success",data: {photo}, });
+    res.send({status: "success",data: {photo}, });
 
   } catch (error) {
       res.status(405).send({status: 'error', message: "Method not allowed"});
-      
       throw error;
     };
 };
@@ -74,17 +66,13 @@ const store = async (req, res) => {
 const destroy = async (req, res) => {
 
   try{
-    const photo = await new models.Photo({ id: req.params.photoId, user_id: req.user.id }).fetch( {withRelated: 'albums'} );
-    
+    const photo = await new models.Photo({ id: req.params.photoId, user_id: req.user.id }).fetch( {withRelated: 'albums'} );  
     await photo.albums().detach();
     await photo.destroy();
-
-    res.send({
-      status: "success", data: {photo}, });
+    res.send({status: "success", message: "Photo deleted.", });
 
   } catch (error) {
       res.status(404).send({status: 'error', message: "Delete failed. Photo does not exist in your account."});
-
       throw error;  
     };
 };

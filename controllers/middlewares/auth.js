@@ -6,16 +6,16 @@ const { User } = require('../../models');
 
 const basic = async (req, res, next) => {
     
-     // Check if authorization header exists, otherwise deny.
-     if (!req.headers.authorization) {
-         res.status(401).send({status:'fail', data: 'Authorization required'});
-         return;
-     }
+    // Check if authorization header exists, otherwise deny.
+    if (!req.headers.authorization) {
+        res.status(401).send({status:'fail', data: 'Authorization required'});
+        return;
+}
 
      //Splitting Basic and decoding
     const [authSchema, base64Payload] = req.headers.authorization.split(' ');
 
-     if(authSchema.toLowerCase() !== "basic") {
+    if(authSchema.toLowerCase() !== "basic") {
          // not supported
          res.status(401).send({status:'fail', data: 'Authentication required.'});
          return;

@@ -26,7 +26,6 @@ const register = async (req, res) => {
       
     }
   
-  
     try{
       const user = await new User(validData).save();
       res.send({
